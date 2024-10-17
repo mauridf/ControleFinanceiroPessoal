@@ -11,10 +11,12 @@ namespace ControleFinanceiroPessoal.Services;
 public class UsuarioService
 {
     private readonly UsuarioRepository _repository;
+    private readonly IConfiguration _configuration;
 
-    public UsuarioService(UsuarioRepository repository)
+    public UsuarioService(UsuarioRepository repository, IConfiguration configuration)
     {
         _repository = repository;
+        _configuration = configuration;
     }
 
     public async Task<Usuario> GetUsuarioByEmailAsync(string email)
@@ -46,7 +48,7 @@ public class UsuarioService
     public string GerarToken(Usuario usuario)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes("dzgwkposE/Bv3RVl3wyHkYKBGNpFdQQTPNBNa2fomHk="); // Use a mesma chave que você definiu no appsettings.json
+        var key = Encoding.ASCII.GetBytes(_configuration["JwtSettings:Key"]); // Pegando a chave diretamente do appsettings.json
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(new Claim[]

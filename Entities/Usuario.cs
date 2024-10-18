@@ -8,6 +8,10 @@ public class Usuario : IEntity
     [BsonId]
     public ObjectId Id { get; set; }
 
+    // Propriedade para expor o ID como string
+    [BsonIgnore]
+    public string IdString => Id.ToString();
+
     [BsonRequired]
     public string Nome { get; set; }
 

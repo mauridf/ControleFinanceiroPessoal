@@ -6,7 +6,7 @@ using MongoDB.Bson;
 
 namespace ControleFinanceiroPessoal.Controllers;
 
-[Authorize]
+//[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class SaldoFinalController : ControllerBase

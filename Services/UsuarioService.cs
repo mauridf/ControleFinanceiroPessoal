@@ -48,15 +48,18 @@ public class UsuarioService
     public string GerarToken(Usuario usuario)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_configuration["JwtSettings:Key"]); // Pegando a chave diretamente do appsettings.json
+        var key = Encoding.ASCII.GetBytes(_configuration["JwtSettings:Key"]);
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(new Claim[]
             {
-                new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
-                new Claim(ClaimTypes.Email, usuario.Email)
+            new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
+            new Claim(ClaimTypes.Email, usuario.Email),
+                // Você pode adicionar mais claims aqui se necessário
             }),
-            Expires = DateTime.UtcNow.AddDays(7), // Defina a expiração do token
+            Expires = DateTime.UtcNow.AddDays(Convert.ToDouble(_configuration["JwtSettings:TokenLifetimeInDays"])),
+            Issuer = _configuration["JwtSettings:Issuer"],
+            Audience = _configuration["JwtSettings:Audience"],
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };
 

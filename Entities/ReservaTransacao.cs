@@ -8,6 +8,9 @@ namespace ControleFinanceiroPessoal.Entities
     {
         [BsonId]
         public ObjectId Id { get; set; }
+        // Propriedade para expor o ID como string
+        [BsonIgnore]
+        public string IdString => Id.ToString();
         public ObjectId ReservaId { get; set; }
         public decimal Valor { get; set; } // Valor utilizado ou adicionado
         public DateTime DataTransacao { get; set; }

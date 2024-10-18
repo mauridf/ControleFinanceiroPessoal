@@ -32,40 +32,37 @@ public class DashBoardService
     }
 
     // 1. Créditos por mês (Ano corrente)
-    public async Task<IEnumerable<BsonDocument>> GetCreditosPorMesAsync()
+    public async Task<IEnumerable<BsonDocument>> GetCreditosPorMesAsync(string usuarioId)
     {
         var currentYear = DateTime.UtcNow.Year;
+
         var pipeline = new[]
         {
-            new BsonDocument
-            {
-                { "$match", new BsonDocument
-                    {
-                        { "Data", new BsonDocument
-                            {
-                                { "$gte", new DateTime(currentYear, 1, 1) },
-                                { "$lt", new DateTime(currentYear + 1, 1, 1) }
-                            }
+        new BsonDocument
+        {
+            { "$match", new BsonDocument
+                {
+                    { "UsuarioId", usuarioId },
+                    { "Ano", currentYear }
+                }
+            }
+        },
+        new BsonDocument
+        {
+            { "$group", new BsonDocument
+                {
+                    { "_id", new BsonDocument
+                        {
+                            { "mes", "$Mes" },
+                            { "ano", "$Ano" }
                         }
-                    }
+                    },
+                    { "total", new BsonDocument("$sum", new BsonDocument("$toDouble", "$Valor")) } // Conversão para double aqui
                 }
-            },
-            new BsonDocument
-            {
-                { "$group", new BsonDocument
-                    {
-                        { "_id", new BsonDocument
-                            {
-                                { "mes", new BsonDocument("$month", "$Data") },
-                                { "ano", new BsonDocument("$year", "$Data") }
-                            }
-                        },
-                        { "total", new BsonDocument("$sum", "$Valor") }
-                    }
-                }
-            },
-            new BsonDocument { { "$sort", new BsonDocument("_id.mes", 1) } }
-        };
+            }
+        },
+        new BsonDocument { { "$sort", new BsonDocument("_id.mes", 1) } }
+    };
 
         var result = await _creditoRepository.AggregateAsync(pipeline);
         return result;

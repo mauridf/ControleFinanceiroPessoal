@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace ControleFinanceiroPessoal.Controllers;
 
-[Authorize]
+//[Authorize]
 [Route("api/[controller]")]
 [ApiController]
 public class DashBoardController : ControllerBase
@@ -22,8 +22,20 @@ public class DashBoardController : ControllerBase
     /// </summary>
     /// <returns>Todos os créditos no mês informado.</returns>
     [HttpGet("creditos/mes")]
-    public async Task<IActionResult> GetCreditosPorMes() =>
-        Ok(await _dashBoardService.GetCreditosPorMesAsync());
+    public async Task<IActionResult> GetCreditosPorMes(string usuarioId)
+    {
+        try
+        {
+            var result = await _dashBoardService.GetCreditosPorMesAsync(usuarioId);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            // Registre o erro aqui
+            return StatusCode(500, new { Message = ex.Message, Detailed = ex.ToString() });
+        }
+    }
+
 
     /// <summary>
     /// Obtém todos os débitos por mês.

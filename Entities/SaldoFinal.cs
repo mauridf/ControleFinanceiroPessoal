@@ -7,6 +7,9 @@ public class SaldoFinal : IEntity
 {
     [BsonId]
     public ObjectId Id { get; set; }
+    // Propriedade para expor o ID como string
+    [BsonIgnore]
+    public string IdString => Id.ToString();
     [BsonRequired]
     public ObjectId UsuarioId { get; set; }
     public decimal Valor { get; set; }

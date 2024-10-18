@@ -23,6 +23,7 @@ builder.Services.AddScoped<DebitoService>();
 builder.Services.AddScoped<ReservaService>();
 builder.Services.AddScoped<SaldoFinalService>();
 builder.Services.AddScoped<UsuarioService>();
+builder.Services.AddScoped<DashBoardService>();
 builder.Services.AddControllers();
 
 builder.Services.Configure<MongoDbSettings>(

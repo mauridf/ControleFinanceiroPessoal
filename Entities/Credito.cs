@@ -7,8 +7,14 @@ public class Credito : IEntity
 {
     [BsonId]
     public ObjectId Id { get; set; }
+
+    // Propriedade para expor o ID como string
+    [BsonIgnore]
+    public string IdString => Id.ToString();
+
     [BsonRequired]
-    public ObjectId UsuarioId { get; set; }
+    public string UsuarioId { get; set; } // Aqui está como string
+
     public string Descricao { get; set; } = string.Empty;
     public decimal Valor { get; set; }
     public int Mes { get; set; }

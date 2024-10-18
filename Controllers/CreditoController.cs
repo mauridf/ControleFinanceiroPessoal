@@ -6,7 +6,7 @@ using MongoDB.Bson;
 
 namespace ControleFinanceiroPessoal.Controllers;
 
-[Authorize]
+//[Authorize]
 [Route("api/[controller]")]
 [ApiController]
 public class CreditoController : ControllerBase
@@ -25,6 +25,18 @@ public class CreditoController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAllCreditos() =>
         Ok(await _creditoService.GetAllCreditosAsync());
+
+    /// <summary>
+    /// Obtém os créditos por Usuário.
+    /// </summary>
+    /// <param name="usuarioId">O ID do usuário.</param>
+    /// <returns>Os créditos cadastrados pelo usuário</returns>
+    [HttpGet("usuario/{usuarioId}")]
+    public async Task<IActionResult> GetCreditosByUsuarioId(string usuarioId)
+    {
+        var creditos = await _creditoService.GetCreditosByUsuarioIdAsync(usuarioId);
+        return Ok(creditos);
+    }
 
     /// <summary>
     /// Obtém o crédito pelo Id.
@@ -54,10 +66,25 @@ public class CreditoController : ControllerBase
     [HttpPost]
     [ProducesResponseType(typeof(Credito), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> CreateCredito(Credito credito)
+    public async Task<IActionResult> CreateCredito([FromBody] Credito credito)
     {
-        await _creditoService.InsertCreditoAsync(credito);
-        return CreatedAtAction(nameof(GetCreditoById), new { id = credito.Id }, credito);
+        if (credito == null)
+        {
+            return BadRequest(new { erro = "Credito não pode ser nulo." });
+        }
+
+        try
+        {
+            // Aqui o UsuarioId já é uma string e não precisa de conversão
+
+            await _creditoService.InsertCreditoAsync(credito); // Usando o método correto
+
+            return CreatedAtAction(nameof(GetCreditoById), new { id = credito.IdString }, credito);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { erro = ex.Message });
+        }
     }
 
     /// <summary>

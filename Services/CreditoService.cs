@@ -1,6 +1,7 @@
 ﻿using ControleFinanceiroPessoal.Entities;
 using ControleFinanceiroPessoal.Repositories;
 using MongoDB.Bson;
+using MongoDB.Driver;
 
 namespace ControleFinanceiroPessoal.Services;
 
@@ -22,4 +23,10 @@ public class CreditoService
     public async Task UpdateCreditoAsync(Credito credito) => await _repository.UpdateAsync(credito);
 
     public async Task DeleteCreditoAsync(ObjectId id) => await _repository.DeleteAsync(id);
+
+    public async Task<IEnumerable<Credito>> GetCreditosByUsuarioIdAsync(string usuarioId)
+    {
+        var filter = Builders<Credito>.Filter.Eq(x => x.UsuarioId, usuarioId);
+        return await _repository.FindByConditionAsync(filter);
+    }
 }
